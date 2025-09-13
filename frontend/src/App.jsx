@@ -1,12 +1,14 @@
 import "./App.css";
+import ThemeToggle from "./components/ThemeToggle";
+import Layout from "./layout";
 
 function App() {
   return (
-    <>
-      <div>
-        <h1 class="text-3xl font-bold underline">Hello world!</h1>
-      </div>
-    </>
+    <ThemeToggle>
+      {(isDark, toggleTheme) => (
+        <Layout isDark={isDark} toggleTheme={toggleTheme} />
+      )}
+    </ThemeToggle>
   );
 }
 
