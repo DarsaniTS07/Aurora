@@ -159,7 +159,7 @@ const UserLogin = () => {
                 color="primary"
                 size="large"
                 disabled={otp.join("").length !== 6}
-                onClick={() => alert("Login successful!")}
+                onClick={() => navigate("/dashboard")}
                 sx={{ borderRadius: 2, py: 1.5, fontWeight: 600, mb: 2 }}
               >
                 Verify & Continue
