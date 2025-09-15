@@ -11,8 +11,9 @@ const HealthTips = ({ isDark }) => {
         gutterBottom 
         sx={{ 
           mb: 3,
+          ml:3,
           fontWeight: 600,
-          color: isDark ? "#fff" : "#1976d2"
+          color: isDark ? "#theme.primary" : "theme.primary"
         }}
       >
         Health & Safety Tips
@@ -22,21 +23,12 @@ const HealthTips = ({ isDark }) => {
         sx={{
           display: "flex",
           gap: { xs: 2, sm: 3 },
+          mx: 2,
           overflowX: "auto",
-          pb: 2,
+          pb: 1,
           "&::-webkit-scrollbar": { 
-            height: 8,
-          },
-          "&::-webkit-scrollbar-track": {
-            bgcolor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
-            borderRadius: 4,
-          },
-          "&::-webkit-scrollbar-thumb": {
-            bgcolor: isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)",
-            borderRadius: 4,
-            "&:hover": {
-              bgcolor: isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
-            },
+            // height: 8,
+            display:'none'
           },
         }}
       >
@@ -45,7 +37,7 @@ const HealthTips = ({ isDark }) => {
             key={tip.id}
             sx={{
               minWidth: { xs: 100, sm: 320, md: 350 },
-              maxWidth: 300,
+              maxWidth: 280,
               borderRadius: 3,
               boxShadow: isDark ? 4 : 2,
               flex: "0 0 auto",
@@ -69,13 +61,13 @@ const HealthTips = ({ isDark }) => {
                 minHeight: 100,
                 maxHeight: 100,
               }}          />
-            <CardContent sx={{ p: 3 }}>
+            <CardContent sx={{ p: 1 }}>
               <Typography 
                 variant="h6" 
                 fontWeight="bold"
                 sx={{ 
                   mb: 1,
-                  color: isDark ? "#fff" : "#1976d2"
+                  color: isDark ? "#fff" : "theme.primary"
                 }}
               >
                 {tip.title}
@@ -84,7 +76,7 @@ const HealthTips = ({ isDark }) => {
                 variant="body2" 
                 sx={{
                   color: isDark ? "rgba(255,255,255,0.7)" : "text.secondary",
-                  lineHeight: 1.6,
+                  lineHeight: 1.2,
                 }}
               >
                 {tip.description}

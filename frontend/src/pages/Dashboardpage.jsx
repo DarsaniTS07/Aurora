@@ -1,8 +1,9 @@
 import React from "react";
-import Header from "../components/Dashboard/Header";
 import SearchBar from "../components/Dashboard/SearchBar";
 import HealthTips from "../components/Dashboard/HealthTips";
 import { Box, Container } from "@mui/material";
+import PreventionMeasures from "../components/Dashboard/PreventionMeasures";
+import WaterQualityCard from "../components/Dashboard/WaterQualityCard";
 
 const Dashboardpage = ({ isDark, toggleTheme }) => {
   return (
@@ -13,17 +14,15 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
         position: "relative",
       }}
     >
-      {/* Dashboard Header (with tips bar) */}
-      <Header isDark={isDark} toggleTheme={toggleTheme} />
 
       {/* Main Content Container */}
       <Box
         maxWidth="xl"
-        // sx={{
-        //   pt: { xs: 2, sm: 3, md: 1 }, // Top padding after header
-        //   pb: { xs: 2, sm: 3, md: 1 }, // Bottom padding
-        //   px: { xs: 2, sm: 3, md: 1 }, // Horizontal padding
-        // }}
+        sx={{
+          pt: { xs: 0.3, sm: 0.5, md: 1 }, // Top padding after header
+          pb: { xs: 0.3, sm: 0.5, md: 1 }, // Bottom padding
+          px: { xs: 0.3, sm: 0.5, md: 1 }, // Horizontal padding
+        }}
       >
         {/* Search Section */}
         <Box
@@ -38,16 +37,18 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
           <SearchBar isDark={isDark} toggleTheme={toggleTheme} />
         </Box>
 
+        <WaterQualityCard isDark={isDark} />
         {/* Health Tips Section */}
         <Box
           sx={{
-            mb: { xs: 3, sm: 4, md: 1 },
+            mt:2,
+            mb: { xs: 1, sm: 2, md: 1 },
           }}
         >
           <HealthTips />
         </Box>
 
-        {/* Additional Dashboard Content */}
+        {/* Prevention Measures */}
         <Box
           sx={{
             display: "grid",
@@ -62,46 +63,12 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
             mt: { xs: 2, sm: 3, md: 4 },
           }}
         >
-          {/* Add your other dashboard components here */}
-          {/* Example placeholders */}
           <Box
             sx={{
-              height: 200,
-              bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-              borderRadius: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
+              mb: { xs: 3, sm: 4, md: 1 },
             }}
           >
-            Dashboard Widget 1
-          </Box>
-          <Box
-            sx={{
-              height: 200,
-              bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-              borderRadius: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
-            }}
-          >
-            Dashboard Widget 2
-          </Box>
-          <Box
-            sx={{
-              height: 200,
-              bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-              borderRadius: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
-            }}
-          >
-            Dashboard Widget 3
+            <PreventionMeasures />
           </Box>
         </Box>
       </Box>

@@ -17,7 +17,7 @@ import {
   DarkMode as DarkModeIcon
 } from '@mui/icons-material';
 
-const Header = ({ isDark, toggleTheme, userName = "JD" }) => {
+const DashboardHeader = ({ isDark, toggleTheme, userName = "JD" }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = React.useState(null);
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -170,4 +170,4 @@ const Header = ({ isDark, toggleTheme, userName = "JD" }) => {
   );
 };
 
-export default Header;
+export default DashboardHeader;
