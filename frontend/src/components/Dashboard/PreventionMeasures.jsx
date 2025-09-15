@@ -14,10 +14,11 @@ import preventionData from "../../data/prevention";
 const PreventionMeasures = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // true if mobile
+  const isDarkMode = theme.palette.mode === 'dark';
 
   return (
     <Box sx={{ flexGrow: 1, p: 2 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" gutterBottom sx={{ color: 'primary.main', fontWeight: 600 }}>
         Prevention Measures
       </Typography>
 
@@ -38,17 +39,20 @@ const PreventionMeasures = () => {
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
-              boxShadow: 3,
+              boxShadow: isDarkMode ? 2 : 3,
               borderRadius: 3,
+              bgcolor: isDarkMode ? 'background.paper' : '#fff',
+              border: '1px solid',
+              borderColor: isDarkMode ? 'primary.dark' : 'divider',
             }}
           >
             <CardContent>
-              <Typography variant="h6" sx={{ mt: 1 }}>
+              <Typography variant="h6" sx={{ mt: 1, color: 'primary.main' }}>
                 {item.title}
               </Typography>
               <Typography
                 variant="body2"
-                color="text.secondary"
+                color={isDarkMode ? 'text.secondary' : 'text.secondary'}
                 sx={{ mt: 1, mb: 2 }}
               >
                 {item.description}

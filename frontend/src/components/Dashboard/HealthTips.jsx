@@ -1,9 +1,11 @@
 // HealthTips.jsx
 import React from "react";
-import { Card, CardContent, Typography, CardMedia, Box } from "@mui/material";
+import { Card, CardContent, Typography, CardMedia, Box, useTheme } from "@mui/material";
 import healthTips from "../../data/healthTips";
 
 const HealthTips = ({ isDark }) => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark' || isDark;
   return (
     <Box sx={{ width: "100%" }}>
       <Typography 
@@ -13,7 +15,7 @@ const HealthTips = ({ isDark }) => {
           mb: 3,
           ml:3,
           fontWeight: 600,
-          color: isDark ? "#theme.primary" : "theme.primary"
+          color: 'primary.main'
         }}
       >
         Health & Safety Tips
@@ -41,8 +43,9 @@ const HealthTips = ({ isDark }) => {
               borderRadius: 3,
               boxShadow: isDark ? 4 : 2,
               flex: "0 0 auto",
-              bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#fff",
-              border: isDark ? "1px solid rgba(255,255,255,0.1)" : "none",
+              bgcolor: isDarkMode ? 'background.paper' : '#fff',
+              border: '1px solid',
+              borderColor: isDarkMode ? 'primary.dark' : 'divider',
               transition: "all 0.3s ease",
               "&:hover": {
                 transform: "translateY(-4px)",
@@ -67,7 +70,7 @@ const HealthTips = ({ isDark }) => {
                 fontWeight="bold"
                 sx={{ 
                   mb: 1,
-                  color: isDark ? "#fff" : "theme.primary"
+                  color: 'primary.main'
                 }}
               >
                 {tip.title}

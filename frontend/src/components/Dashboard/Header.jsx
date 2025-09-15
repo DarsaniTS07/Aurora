@@ -40,7 +40,7 @@ const DashboardHeader = ({ isDark, toggleTheme, userName = "JD" }) => {
       position="fixed"
       elevation={2}
       sx={{
-        backgroundColor: isDark ? 'primary.dark' : 'background.paper',
+        backgroundColor: isDark ? 'background.paper' : 'background.paper',
         color: isDark ? 'grey.100' : 'text.primary',
         borderRadius: 0,
         top: 0,

@@ -1,9 +1,11 @@
 import React from "react";
-import { Box, Typography, Paper, useMediaQuery } from "@mui/material";
+import { Box, Typography, Paper, useMediaQuery, useTheme } from "@mui/material";
 import { Opacity, Thermostat, Waves, Science } from "@mui/icons-material";
 
-const WaterQualityCard = ({ isDark }) => {
+const WaterQualityCard = ({ isDark, toggleTheme }) => {
+  const theme = useTheme();
   const isMobile = useMediaQuery("(max-width:900px)");
+  const isDarkMode = theme.palette.mode === 'dark' || isDark;
 
   const values = {
     ph: 7.2,
@@ -72,19 +74,36 @@ const WaterQualityCard = ({ isDark }) => {
 
   let overallStatus = "GOOD";
   let overallExplanation = "✅ This water is safe to use for drinking and daily needs.";
-  let statusColor = "green";
+
+  const getStatusColor = (status) => {
+    if (status === 'error') {
+      return isDarkMode ? theme.palette.error.light : theme.palette.error.main;
+    }
+    if (status === 'warning') {
+      return isDarkMode ? theme.palette.warning.light : theme.palette.warning.main;
+    }
+    // success
+    return isDarkMode ? theme.palette.success.light : theme.palette.success.main;
+  };
 
   if (cardData.some((item) => item.status === "error")) {
     overallStatus = "BAD";
     overallExplanation =
       "❌ Water is contaminated and unsafe for direct consumption. Needs purification.";
-    statusColor = "red";
   } else if (cardData.some((item) => item.status === "warning")) {
     overallStatus = "MODERATE";
     overallExplanation =
       "⚠ Water is usable but has some issues. Consider treatment before consumption.";
-    statusColor = "orange";
+  } else if (cardData.some((item) => item.status === "warning")) {
+    // handled above
   }
+
+  const worstStatus = cardData.some((i) => i.status === 'error')
+    ? 'error'
+    : cardData.some((i) => i.status === 'warning')
+    ? 'warning'
+    : 'success';
+  const statusColor = getStatusColor(worstStatus);
 
   const OverallComment = () => (
     <Paper
@@ -93,13 +112,15 @@ const WaterQualityCard = ({ isDark }) => {
         p: 2,
         borderRadius: 2,
         textAlign: "center",
-        bgcolor: isDark ? "rgba(255,255,255,0.08)" : "#f0f4ff",
+        bgcolor: isDarkMode ? 'background.paper' : '#f0f4ff',
+        border: '1px solid',
+        borderColor: isDarkMode ? 'primary.dark' : 'primary.light',
         mt: 2,
       }}
     >
       <Typography
         variant="subtitle1"
-        sx={{ fontWeight: "bold", color: "#1976d2", mb: 1 }}
+        sx={{ fontWeight: "bold", color: 'primary.main', mb: 1 }}
       >
         Water Quality
       </Typography>
@@ -122,7 +143,7 @@ const WaterQualityCard = ({ isDark }) => {
         p: 2,
         borderRadius: 2,
         textAlign: "center",
-        bgcolor: isDark ? "rgba(255,255,255,0.08)" : "#fff",
+        bgcolor: isDarkMode ? 'background.paper' : '#fff',
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -137,12 +158,7 @@ const WaterQualityCard = ({ isDark }) => {
       <Typography
         variant="body2"
         sx={{
-          color:
-            item.status === "success"
-              ? "green"
-              : item.status === "warning"
-              ? "orange"
-              : "red",
+          color: getStatusColor(item.status),
           fontWeight: "bold",
           mt: 1,
         }}
@@ -151,15 +167,7 @@ const WaterQualityCard = ({ isDark }) => {
       </Typography>
       <Typography
         variant="caption"
-        sx={{
-          color:
-            item.status === "success"
-              ? "green"
-              : item.status === "warning"
-              ? "orange"
-              : "red",
-          mt: 0.5,
-        }}
+        sx={{ color: getStatusColor(item.status), mt: 0.5 }}
       >
         {item.comment}
       </Typography>
@@ -174,7 +182,7 @@ const WaterQualityCard = ({ isDark }) => {
         p: 2,
         borderRadius: 2,
         textAlign: "center",
-        bgcolor: isDark ? "rgba(255,255,255,0.08)" : "#fff",
+        bgcolor: isDarkMode ? 'background.paper' : '#fff',
       }}
     >
       <Box
@@ -232,12 +240,17 @@ const WaterQualityCard = ({ isDark }) => {
         p: 3,
         borderRadius: 3,
         width: "100%",
-        bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#fafaff",
+        maxWidth: { xs: '100%', md: 1200 },
+        bgcolor: isDarkMode ? 'background.default' : '#fafaff',
+        border: '1px solid',
+        borderColor: isDarkMode ? 'primary.dark' : 'primary.light',
+        mx: 'auto',
+        px: { xs: 1, sm: 2 },
       }}
     >
       <Typography
         variant="h6"
-        sx={{ mb: 3, fontWeight: "bold", color: "#1976d2" }}
+        sx={{ mb: 3, fontWeight: "bold", color: 'primary.main' }}
       >
         Water Quality Overview
       </Typography>

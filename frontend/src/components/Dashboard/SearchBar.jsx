@@ -4,12 +4,36 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import { FaCloudSun, FaCloudMoon, FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt, FaLocationArrow } from "react-icons/fa";
 
 const filter = createFilterOptions();
 
 export default function SearchBar({ isDark, toggleTheme }) {
   const [value, setValue] = useState(null);
+  const [isLocating, setIsLocating] = useState(false);
+
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // You can reverse geocode these coordinates to get address
+        // For now, we'll just show coordinates
+        setValue({ title: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}` });
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        alert('Unable to retrieve your location. Please try again.');
+        setIsLocating(false);
+      }
+    );
+  };
 
   return (
     <Box
@@ -119,7 +143,7 @@ export default function SearchBar({ isDark, toggleTheme }) {
           )}
         />
 
-        {/* Theme Toggle Button */}
+        {/* Location Enable Button */}
         <Box
           sx={{
             borderLeft: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
@@ -132,7 +156,8 @@ export default function SearchBar({ isDark, toggleTheme }) {
           }}
         >
           <IconButton
-            onClick={toggleTheme}
+            onClick={getCurrentLocation}
+            disabled={isLocating}
             sx={{
               width: '100%',
               height: '100%',
@@ -144,10 +169,14 @@ export default function SearchBar({ isDark, toggleTheme }) {
                 bgcolor: isDark ? 'rgba(144, 202, 249, 0.1)' : 'rgba(25, 118, 210, 0.1)',
                 transform: 'scale(1.05)',
               },
+              '&:disabled': {
+                opacity: 0.6,
+                transform: 'none',
+              },
             }}
-            aria-label="Toggle theme"
+            aria-label="Get current location"
           >
-            {isDark ? <FaCloudSun size={20} /> : <FaCloudMoon size={20} />}
+            <FaLocationArrow size={20} />
           </IconButton>
         </Box>
       </Box>

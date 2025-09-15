@@ -10,7 +10,6 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: isDark ? "#0a1929" : "#f5f5f5",
         position: "relative",
       }}
     >
@@ -37,7 +36,7 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
           <SearchBar isDark={isDark} toggleTheme={toggleTheme} />
         </Box>
 
-        <WaterQualityCard isDark={isDark} />
+        <WaterQualityCard isDark={isDark} toggleTheme={toggleTheme}/>
         {/* Health Tips Section */}
         <Box
           sx={{
