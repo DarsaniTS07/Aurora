@@ -1,38 +1,43 @@
 import React from "react";
+import { 
+  Box, 
+  Typography, 
+  Card, 
+  CardContent, 
+  Chip, 
+  LinearProgress, 
+  Grid, 
+  Paper,
+  useTheme,
+  alpha
+} from "@mui/material";
 import { CheckCircle, AlertTriangle, XCircle, Shield, Droplets, Activity } from "lucide-react";
 
 const WaterQualityChart = ({ waterQuality, advice }) => {
+  const theme = useTheme();
+  
   const getQualityStyles = () => {
     switch (waterQuality) {
       case "Good":
         return {
-          bg: "from-green-50 via-emerald-50 to-green-50",
-          border: "border-green-300",
-          text: "text-green-700",
-          ring: "ring-green-200",
-          accent: "bg-green-500",
-          icon: <Shield className="w-8 h-8 text-green-600" />,
-          statusColor: "text-green-800"
+          primaryColor: theme.palette.success.main,
+          lightColor: alpha(theme.palette.success.main, 0.1),
+          icon: <Shield size={32} color={theme.palette.success.main} />,
+          chipColor: "success"
         };
       case "Fair":
         return {
-          bg: "from-amber-50 via-yellow-50 to-orange-50",
-          border: "border-amber-300",
-          text: "text-amber-700",
-          ring: "ring-amber-200",
-          accent: "bg-amber-500",
-          icon: <AlertTriangle className="w-8 h-8 text-amber-600" />,
-          statusColor: "text-amber-800"
+          primaryColor: theme.palette.warning.main,
+          lightColor: alpha(theme.palette.warning.main, 0.1),
+          icon: <AlertTriangle size={32} color={theme.palette.warning.main} />,
+          chipColor: "warning"
         };
       default:
         return {
-          bg: "from-red-50 via-pink-50 to-red-50",
-          border: "border-red-300",
-          text: "text-red-700",
-          ring: "ring-red-200",
-          accent: "bg-red-500",
-          icon: <XCircle className="w-8 h-8 text-red-600" />,
-          statusColor: "text-red-800"
+          primaryColor: theme.palette.error.main,
+          lightColor: alpha(theme.palette.error.main, 0.1),
+          icon: <XCircle size={32} color={theme.palette.error.main} />,
+          chipColor: "error"
         };
     }
   };
@@ -45,184 +50,349 @@ const WaterQualityChart = ({ waterQuality, advice }) => {
   const qualityPercentage = totalCount > 0 ? (positiveCount / totalCount * 100) : 0;
 
   const getAdviceIcon = (tip) => {
-    if (tip.includes("✅")) return <CheckCircle className="w-5 h-5 text-green-600" />;
-    if (tip.includes("⚠️")) return <AlertTriangle className="w-5 h-5 text-orange-600" />;
-    if (tip.includes("🔍")) return <Activity className="w-5 h-5 text-blue-600" />;
-    if (tip.includes("💧")) return <Droplets className="w-5 h-5 text-cyan-600" />;
-    return <AlertTriangle className="w-5 h-5 text-red-600" />;
+    if (tip.includes("✅")) return <CheckCircle size={20} color={theme.palette.success.main} />;
+    if (tip.includes("⚠️")) return <AlertTriangle size={20} color={theme.palette.warning.main} />;
+    if (tip.includes("🔍")) return <Activity size={20} color={theme.palette.info.main} />;
+    if (tip.includes("💧")) return <Droplets size={20} color={theme.palette.primary.main} />;
+    return <AlertTriangle size={20} color={theme.palette.error.main} />;
   };
 
   const getAdviceStyles = (tip) => {
     if (tip.includes("✅")) {
       return {
-        bg: "from-green-50 to-emerald-50",
-        border: "border-green-200",
-        text: "text-green-800"
+        bgcolor: alpha(theme.palette.success.main, 0.1),
+        borderColor: theme.palette.success.main,
+        color: theme.palette.success.dark
       };
     }
     if (tip.includes("⚠️")) {
       return {
-        bg: "from-orange-50 to-amber-50",
-        border: "border-orange-200",
-        text: "text-orange-800"
+        bgcolor: alpha(theme.palette.warning.main, 0.1),
+        borderColor: theme.palette.warning.main,
+        color: theme.palette.warning.dark
       };
     }
     if (tip.includes("🔍")) {
       return {
-        bg: "from-blue-50 to-cyan-50",
-        border: "border-blue-200",
-        text: "text-blue-800"
+        bgcolor: alpha(theme.palette.info.main, 0.1),
+        borderColor: theme.palette.info.main,
+        color: theme.palette.info.dark
       };
     }
     if (tip.includes("💧")) {
       return {
-        bg: "from-cyan-50 to-blue-50",
-        border: "border-cyan-200",
-        text: "text-cyan-800"
+        bgcolor: alpha(theme.palette.primary.main, 0.1),
+        borderColor: theme.palette.primary.main,
+        color: theme.palette.primary.dark
       };
     }
     return {
-      bg: "from-red-50 to-pink-50",
-      border: "border-red-200",
-      text: "text-red-800"
+      bgcolor: alpha(theme.palette.error.main, 0.1),
+      borderColor: theme.palette.error.main,
+      color: theme.palette.error.dark
     };
   };
 
   return (
-    <div className={`mt-8 p-6 rounded-2xl bg-gradient-to-br ${styles.bg} border-2 ${styles.border} shadow-xl relative overflow-hidden`}>
+    <Card 
+      sx={{ 
+        mt: 3, 
+        p: 3,
+        background: `linear-gradient(135deg, ${styles.lightColor} 0%, ${alpha(styles.primaryColor, 0.05)} 100%)`,
+        border: `2px solid ${alpha(styles.primaryColor, 0.3)}`,
+        boxShadow: 3,
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: -64,
+          right: -64,
+          width: 128,
+          height: 128,
+          borderRadius: '50%',
+          background: alpha(theme.palette.common.white, 0.2),
+          zIndex: 0
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 48,
+          left: -48,
+          width: 96,
+          height: 96,
+          borderRadius: '50%',
+          background: alpha(theme.palette.common.white, 0.1),
+          zIndex: 0
+        }}
+      />
 
       {/* Header Section */}
-      <div className="relative z-10 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <div className={`p-3 bg-white/80 rounded-2xl shadow-lg`}>
+      <Box sx={{ position: 'relative', zIndex: 1, mb: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Paper 
+              elevation={2}
+              sx={{ 
+                p: 2, 
+                borderRadius: 2,
+                backgroundColor: alpha(theme.palette.common.white, 0.8)
+              }}
+            >
               {styles.icon}
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-1">
+            </Paper>
+            <Box>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1, color: 'text.primary' }}>
                 Water Quality Assessment
-              </h2>
-              <p className="text-gray-600">Comprehensive parameter analysis</p>
-            </div>
-          </div>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Comprehensive parameter analysis
+              </Typography>
+            </Box>
+          </Box>
 
           {/* Status Badge */}
-          <div className={`px-6 py-3 rounded-2xl bg-white/90 ${styles.border} border-2 shadow-lg`}>
-            <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${styles.accent} animate-pulse`}></div>
-              <span className={`text-xl font-bold ${styles.statusColor}`}>
-                {waterQuality}
-              </span>
-            </div>
-          </div>
-        </div>
+          <Chip
+            label={waterQuality}
+            color={styles.chipColor}
+            size="large"
+            sx={{ 
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              px: 2,
+              py: 1,
+              height: 'auto'
+            }}
+          />
+        </Box>
 
         {/* Quality Score Visualization */}
-        <div className="bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/40">
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-semibold text-gray-700">Overall Quality Score</span>
-            <span className={`text-lg font-bold ${styles.statusColor}`}>
+        <Paper 
+          elevation={1}
+          sx={{ 
+            p: 3, 
+            borderRadius: 2,
+            backgroundColor: alpha(theme.palette.common.white, 0.6),
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${alpha(theme.palette.common.white, 0.4)}`
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'semibold', color: 'text.primary' }}>
+              Overall Quality Score
+            </Typography>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 'bold', 
+                color: styles.primaryColor 
+              }}
+            >
               {qualityPercentage.toFixed(0)}%
-            </span>
-          </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className={`h-full transition-all duration-1000 ${
-                qualityPercentage >= 75 ? 'bg-gradient-to-r from-green-400 to-green-600' :
-                qualityPercentage >= 50 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' :
-                'bg-gradient-to-r from-red-400 to-red-600'
-              }`}
-              style={{ width: `${qualityPercentage}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>Critical</span>
-            <span>Fair</span>
-            <span>Excellent</span>
-          </div>
-        </div>
-      </div>
+            </Typography>
+          </Box>
+          
+          <LinearProgress
+            variant="determinate"
+            value={qualityPercentage}
+            sx={{
+              height: 12,
+              borderRadius: 6,
+              backgroundColor: alpha(theme.palette.grey[300], 0.3),
+              '& .MuiLinearProgress-bar': {
+                borderRadius: 6,
+                background: qualityPercentage >= 75 
+                  ? `linear-gradient(90deg, ${theme.palette.success.main}, ${theme.palette.success.dark})`
+                  : qualityPercentage >= 50 
+                  ? `linear-gradient(90deg, ${theme.palette.warning.main}, ${theme.palette.warning.dark})`
+                  : `linear-gradient(90deg, ${theme.palette.error.main}, ${theme.palette.error.dark})`
+              }
+            }}
+          />
+          
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+            <Typography variant="caption" color="text.secondary">Critical</Typography>
+            <Typography variant="caption" color="text.secondary">Fair</Typography>
+            <Typography variant="caption" color="text.secondary">Excellent</Typography>
+          </Box>
+        </Paper>
+      </Box>
 
       {/* Advice Section */}
-      <div className="relative z-10 space-y-3">
-        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <div className={`w-1 h-6 ${styles.accent} rounded`}></div>
+      <Box sx={{ position: 'relative', zIndex: 1 }}>
+        <Typography 
+          variant="h5" 
+          sx={{ 
+            fontWeight: 'bold', 
+            mb: 3, 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 2,
+            color: 'text.primary'
+          }}
+        >
+          <Box 
+            sx={{ 
+              width: 4, 
+              height: 24, 
+              backgroundColor: styles.primaryColor, 
+              borderRadius: 1 
+            }} 
+          />
           Parameter Analysis Results
-        </h3>
+        </Typography>
 
-        <div className="grid gap-3">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {advice.map((tip, index) => {
             const adviceStyle = getAdviceStyles(tip);
             const cleanTip = tip.replace(/[✅⚠️🔍💧🌡️]/g, "").trim();
             
             return (
-              <div
+              <Paper
                 key={index}
-                className={`group p-4 rounded-xl border-2 bg-gradient-to-r ${adviceStyle.bg} ${adviceStyle.border} transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer`}
+                elevation={1}
+                sx={{
+                  p: 3,
+                  borderRadius: 2,
+                  border: `2px solid ${adviceStyle.borderColor}`,
+                  backgroundColor: adviceStyle.bgcolor,
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    boxShadow: 3,
+                    transform: 'scale(1.02)'
+                  }
+                }}
               >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                  <Box sx={{ mt: 0.5, flexShrink: 0 }}>
                     {getAdviceIcon(tip)}
-                  </div>
-                  <div className="flex-1">
-                    <p className={`${adviceStyle.text} font-medium leading-relaxed text-sm`}>
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        fontWeight: 'medium', 
+                        lineHeight: 1.6, 
+                        color: adviceStyle.color 
+                      }}
+                    >
                       {cleanTip}
-                    </p>
+                    </Typography>
                     
                     {/* Parameter-specific indicators */}
                     {tip.includes("pH") && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">pH Level Analysis</span>
-                      </div>
+                      <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box 
+                          sx={{ 
+                            width: 8, 
+                            height: 8, 
+                            backgroundColor: theme.palette.info.main, 
+                            borderRadius: '50%' 
+                          }} 
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          pH Level Analysis
+                        </Typography>
+                      </Box>
                     )}
                     {tip.includes("TDS") && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Dissolved Solids Check</span>
-                      </div>
+                      <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box 
+                          sx={{ 
+                            width: 8, 
+                            height: 8, 
+                            backgroundColor: theme.palette.primary.main, 
+                            borderRadius: '50%' 
+                          }} 
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          Dissolved Solids Check
+                        </Typography>
+                      </Box>
                     )}
                     {tip.includes("turbidity") && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Clarity Assessment</span>
-                      </div>
+                      <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box 
+                          sx={{ 
+                            width: 8, 
+                            height: 8, 
+                            backgroundColor: theme.palette.secondary.main, 
+                            borderRadius: '50%' 
+                          }} 
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          Clarity Assessment
+                        </Typography>
+                      </Box>
                     )}
                     {tip.includes("temperature") && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Temperature Check</span>
-                      </div>
+                      <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box 
+                          sx={{ 
+                            width: 8, 
+                            height: 8, 
+                            backgroundColor: theme.palette.warning.main, 
+                            borderRadius: '50%' 
+                          }} 
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          Temperature Check
+                        </Typography>
+                      </Box>
                     )}
-                  </div>
-                </div>
-              </div>
+                  </Box>
+                </Box>
+              </Paper>
             );
           })}
-        </div>
+        </Box>
 
         {/* Summary Statistics */}
-        <div className="mt-6 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-white/40">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-green-600">{positiveCount}</div>
-              <div className="text-xs text-gray-600">Optimal</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-orange-600">{totalCount - positiveCount}</div>
-              <div className="text-xs text-gray-600">Needs Attention</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-600">{totalCount}</div>
-              <div className="text-xs text-gray-600">Total Checked</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <Paper 
+          elevation={1}
+          sx={{ 
+            mt: 4, 
+            p: 3, 
+            borderRadius: 2,
+            backgroundColor: alpha(theme.palette.common.white, 0.6),
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${alpha(theme.palette.common.white, 0.4)}`
+          }}
+        >
+          <Grid container spacing={3} sx={{ textAlign: 'center' }}>
+            <Grid item xs={4}>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.success.main, mb: 1 }}>
+                {positiveCount}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Optimal
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.warning.main, mb: 1 }}>
+                {totalCount - positiveCount}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Needs Attention
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.primary.main, mb: 1 }}>
+                {totalCount}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Total Checked
+              </Typography>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Box>
+    </Card>
   );
 };
 

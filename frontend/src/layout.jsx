@@ -9,6 +9,8 @@ import UserRegister from './components/Register/UserRegister';
 import Dashboardpage from './pages/Dashboardpage';
 import WaterAdvisor from './pages/Checker';
 import MobileNavBar from './components/sidebar';
+import ComplaintsPage from './pages/ComplaintsPage';
+import AwarenessPage from './pages/AwarenessPage';
 
 const Layout = ({ isDark, toggleTheme }) => {
   const location = useLocation();
@@ -93,7 +95,7 @@ const Layout = ({ isDark, toggleTheme }) => {
             path="/dashboard"
             element={
               <Box sx={{ p: 0 }}>
-                <Dashboardpage/>
+                <Dashboardpage isDark={isDark} toggleTheme={toggleTheme}/>
               </Box>
             }
           />
@@ -117,8 +119,7 @@ const Layout = ({ isDark, toggleTheme }) => {
             path="/complaints"
             element={
               <Box sx={{ p: 0 }}>
-                <h1>Complaints Page</h1>
-                <p>This page shows the sidebar and dashboard header</p>
+                <ComplaintsPage />
               </Box>
             }
           />
@@ -126,8 +127,7 @@ const Layout = ({ isDark, toggleTheme }) => {
             path="/awareness"
             element={
               <Box sx={{ p: 0 }}>
-                <h1>Awareness Page</h1>
-                <p>This page shows the sidebar and dashboard header</p>
+                <AwarenessPage/>
               </Box>
             }
           />

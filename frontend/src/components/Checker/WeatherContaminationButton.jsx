@@ -1,6 +1,27 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Droplets, X, Loader2, MapPin, Cloud, Thermometer, Droplet } from "lucide-react";
+import {
+  Droplets,
+  X,
+  Loader2,
+  MapPin,
+  Cloud,
+  Thermometer,
+  Droplet,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Button,
+  Box,
+  Typography,
+  IconButton,
+  CircularProgress,
+  Card,
+  CardContent,
+  Divider,
+} from "@mui/material";
 
 const LOOKAHEAD_HOURS = 3;
 
@@ -72,15 +93,15 @@ export default function WeatherContaminationModal({ turbidity }) {
 
           setTimeout(() => {
             const mockWeatherData = {
-              time: Array.from({length: 24}, (_, i) => {
+              time: Array.from({ length: 24 }, (_, i) => {
                 const date = new Date();
                 date.setHours(date.getHours() + i);
                 return date.toISOString();
               }),
-              precipitation: Array.from({length: 24}, () => Math.random() * 5),
-              precipitation_probability: Array.from({length: 24}, () => Math.random() * 100),
-              temperature_2m: Array.from({length: 24}, () => 20 + Math.random() * 15),
-              relativehumidity_2m: Array.from({length: 24}, () => 40 + Math.random() * 40)
+              precipitation: Array.from({ length: 24 }, () => Math.random() * 5),
+              precipitation_probability: Array.from({ length: 24 }, () => Math.random() * 100),
+              temperature_2m: Array.from({ length: 24 }, () => 20 + Math.random() * 15),
+              relativehumidity_2m: Array.from({ length: 24 }, () => 40 + Math.random() * 40),
             };
 
             setWeatherData(mockWeatherData);
@@ -96,10 +117,9 @@ export default function WeatherContaminationModal({ turbidity }) {
             setContaminationProbability(Math.round(baseRisk));
             setLoading(false);
           }, 2000);
-
         } catch (err) {
           console.error(err);
-          setError(err.response?.data?.message || err.message || "Could not fetch data.");
+          setError(err.message || "Could not fetch data.");
           setLoading(false);
         }
       }, (geoErr) => {
@@ -114,231 +134,185 @@ export default function WeatherContaminationModal({ turbidity }) {
   }
 
   const getRiskLevel = (probability) => {
-    if (probability < 30) return {
-      level: "Low",
-      color: "text-green-600",
-      bgColor: "bg-green-100",
-      borderColor: "border-green-300",
-      ringColor: "ring-green-200"
-    };
-    if (probability < 60) return {
-      level: "Moderate",
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-100",
-      borderColor: "border-yellow-300",
-      ringColor: "ring-yellow-200"
-    };
-    if (probability < 80) return {
-      level: "High",
-      color: "text-orange-600",
-      bgColor: "bg-orange-100",
-      borderColor: "border-orange-300",
-      ringColor: "ring-orange-200"
-    };
-    return {
-      level: "Very High",
-      color: "text-red-600",
-      bgColor: "bg-red-100",
-      borderColor: "border-red-300",
-      ringColor: "ring-red-200"
-    };
+    if (probability < 30)
+      return { level: "Low", color: "success.main" };
+    if (probability < 60)
+      return { level: "Moderate", color: "warning.main" };
+    if (probability < 80)
+      return { level: "High", color: "orange" };
+    return { level: "Very High", color: "error.main" };
   };
 
   const riskInfo = contaminationProbability !== null ? getRiskLevel(contaminationProbability) : null;
 
   if (!isClient) return null;
 
-  const handleOpen = () => {
-    setIsOpen(true);
-    document.body.style.overflow = "hidden";
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-    document.body.style.overflow = "";
-  };
-
   return (
     <>
       {/* Trigger Button */}
-      <button
-        onClick={handleOpen}
+      <Button
+        variant="contained"
+        startIcon={<Droplets />}
+        onClick={() => setIsOpen(true)}
         disabled={turbidity === ""}
-        className={`group relative overflow-hidden flex items-center gap-3 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 transform hover:scale-105 ${
-          turbidity === "" 
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg hover:shadow-cyan-500/25"
-        }`}
+        sx={{
+          px: 3,
+          py: 1.5,
+          borderRadius: 3,
+          textTransform: "none",
+        }}
       >
-        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <Droplets className="w-5 h-5 group-hover:animate-pulse relative z-10" />
-        <span className="relative z-10">Weather Analysis</span>
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
-      </button>
+        Weather Analysis
+      </Button>
 
       {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Overlay */}
-          <div 
-            className="fixed inset-0 z-40 bg-black/70 backdrop-blur-2xl"
-            onClick={handleClose}
-          />
-          {/* Modal Content */}
-          <div className="relative z-50 bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-600"></div>
-            <div className="p-6">
-              {/* Header */}
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl">
-                    <Cloud className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                      Weather Impact Analysis
-                    </h2>
-                    <p className="text-gray-600 text-sm">Real-time contamination assessment</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleClose}
-                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200"
-                >
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
+      <Dialog
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Cloud color="blue" />
+            <Box>
+              <Typography variant="h6" fontWeight="bold">
+                Weather Impact Analysis
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Real-time contamination assessment
+              </Typography>
+            </Box>
+          </Box>
+          <IconButton onClick={() => setIsOpen(false)}>
+            <X />
+          </IconButton>
+        </DialogTitle>
 
-              {/* Action Button */}
-              <button
-                onClick={handleCheck}
-                disabled={loading}
-                className={`w-full py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all duration-300 transform hover:scale-105 mb-6 ${
-                  loading 
-                    ? "bg-gray-400 cursor-not-allowed" 
-                    : "bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-600 hover:shadow-lg hover:shadow-cyan-500/25"
-                }`}
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center gap-3">
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    <span>Analyzing Weather Data...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center gap-3">
-                    <Droplets className="w-6 h-6" />
-                    <span>Run Weather Analysis</span>
-                  </div>
-                )}
-              </button>
-
-              {/* Results Section */}
-              {(place || nextRain || contaminationProbability !== null || error) && (
-                <div className="space-y-4">
-                  {/* Location Info */}
-                  {place && (
-                    <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-5 h-5 text-blue-600" />
-                        <div>
-                          <p className="font-semibold text-blue-800">Location</p>
-                          <p className="text-blue-600 text-sm">{place.name}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Weather Forecast */}
-                  {nextRain && (
-                    <div className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-200">
-                      <div className="flex items-center gap-3">
-                        <Droplet className="w-5 h-5 text-indigo-600" />
-                        <div>
-                          <p className="font-semibold text-indigo-800">Weather Forecast</p>
-                          <p className="text-indigo-600 text-sm">{nextRain}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Contamination Risk */}
-                  {contaminationProbability !== null && riskInfo && (
-                    <div className={`p-6 rounded-xl border-2 ${riskInfo.borderColor} ${riskInfo.bgColor}`}>
-                      <h3 className="font-bold text-gray-800 text-xl mb-4 flex items-center gap-2">
-                        <Thermometer className={`w-6 h-6 ${riskInfo.color}`} />
-                        Contamination Risk Assessment
-                      </h3>
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <div className={`text-4xl font-bold ${riskInfo.color} mb-1`}>
-                            {contaminationProbability}%
-                          </div>
-                          <div className={`text-lg font-medium ${riskInfo.color}`}>
-                            {riskInfo.level} Risk
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className={`w-20 h-20 rounded-full ${riskInfo.bgColor} ${riskInfo.borderColor} border-4 flex items-center justify-center`}>
-                            <div className={`text-2xl font-bold ${riskInfo.color}`}>
-                              {riskInfo.level === "Low" ? "✓" : "⚠"}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Risk Level Indicator */}
-                      <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-3">
-                        <div 
-                          className={`h-full transition-all duration-1000 ${
-                            contaminationProbability < 30 ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
-                            contaminationProbability < 60 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
-                            contaminationProbability < 80 ? 'bg-gradient-to-r from-orange-500 to-red-500' :
-                            'bg-gradient-to-r from-red-500 to-red-700'
-                          }`}
-                          style={{ width: `${contaminationProbability}%` }}
-                        ></div>
-                      </div>
-
-                      {/* Risk Recommendations */}
-                      <div className={`p-3 rounded-lg ${riskInfo.bgColor} border ${riskInfo.borderColor}`}>
-                        <h4 className="font-semibold mb-2">Recommendations:</h4>
-                        <ul className="text-sm space-y-1">
-                          {contaminationProbability > 70 && (
-                            <li>• Avoid using this water source until treated</li>
-                          )}
-                          {contaminationProbability > 50 && (
-                            <li>• Boil water for at least 5 minutes before consumption</li>
-                          )}
-                          {contaminationProbability > 30 && (
-                            <li>• Use additional filtration methods</li>
-                          )}
-                          <li>• Monitor weather conditions closely</li>
-                          <li>• Consider alternative water sources if available</li>
-                        </ul>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Error Display */}
-                  {error && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">!</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-red-800">Error</p>
-                          <p className="text-red-600 text-sm">{error}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+        <DialogContent dividers>
+          {/* Action Button */}
+          <Box textAlign="center" mb={3}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleCheck}
+              disabled={loading}
+              sx={{ py: 1.5, borderRadius: 2 }}
+            >
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "white", mr: 1 }} />
+              ) : (
+                <Droplets style={{ marginRight: 8 }} />
               )}
-            </div>
-          </div>
-        </div>
-      )}
+              {loading ? "Analyzing Weather Data..." : "Run Weather Analysis"}
+            </Button>
+          </Box>
+
+          {/* Results */}
+          {(place || nextRain || contaminationProbability !== null || error) && (
+            <Box display="flex" flexDirection="column" gap={2}>
+              {place && (
+                <Card variant="outlined">
+                  <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <MapPin color="blue" />
+                    <Box>
+                      <Typography fontWeight="bold">Location</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {place.name}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+
+              {nextRain && (
+                <Card variant="outlined">
+                  <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Droplet color="indigo" />
+                    <Box>
+                      <Typography fontWeight="bold">Weather Forecast</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {nextRain}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+
+              {contaminationProbability !== null && riskInfo && (
+                <Card variant="outlined" sx={{ borderColor: riskInfo.color }}>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      <Thermometer style={{ marginRight: 8 }} />
+                      Contamination Risk Assessment
+                    </Typography>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                      <Box>
+                        <Typography variant="h4" color={riskInfo.color}>
+                          {contaminationProbability}%
+                        </Typography>
+                        <Typography variant="subtitle1" color={riskInfo.color}>
+                          {riskInfo.level} Risk
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box height={10} borderRadius={5} bgcolor="grey.300" mb={2}>
+                      <Box
+                        height="100%"
+                        borderRadius={5}
+                        bgcolor={riskInfo.color}
+                        sx={{ width: `${contaminationProbability}%` }}
+                      />
+                    </Box>
+                    <Divider sx={{ my: 1 }} />
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Recommendations:
+                    </Typography>
+                    <ul>
+                      {contaminationProbability > 70 && <li>Avoid using this water source until treated</li>}
+                      {contaminationProbability > 50 && <li>Boil water before consumption</li>}
+                      {contaminationProbability > 30 && <li>Use additional filtration methods</li>}
+                      <li>Monitor weather conditions closely</li>
+                      <li>Consider alternative water sources if available</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              )}
+
+              {error && (
+                <Card variant="outlined" sx={{ borderColor: "error.main" }}>
+                  <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: "50%",
+                        bgcolor: "error.main",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "white",
+                        fontSize: 14,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      !
+                    </Box>
+                    <Box>
+                      <Typography fontWeight="bold" color="error">
+                        Error
+                      </Typography>
+                      <Typography variant="body2" color="error">
+                        {error}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -1,5 +1,86 @@
 import React, { useState } from "react";
-import { AlertTriangle, ShieldCheck, Loader2, X, Activity, TrendingUp } from "lucide-react";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  LinearProgress,
+  Chip,
+  Grid,
+  Alert,
+  IconButton,
+  CircularProgress,
+  Stack,
+  Divider,
+  Container
+} from "@mui/material";
+import {
+  Shield as ShieldIcon,
+  Close as CloseIcon,
+  Warning as WarningIcon,
+  TrendingUp as TrendingUpIcon,
+  Science as ScienceIcon,
+  WaterDrop as WaterDropIcon
+} from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
+
+const GradientButton = styled(Button)(({ theme }) => ({
+  background: 'linear-gradient(45deg, #2E7D32 30%, #00695C 90%)',
+  border: 0,
+  borderRadius: 12,
+  boxShadow: '0 3px 5px 2px rgba(46, 125, 50, .3)',
+  color: 'white',
+  height: 48,
+  padding: '0 30px',
+  fontWeight: 600,
+  textTransform: 'none',
+  '&:hover': {
+    background: 'linear-gradient(45deg, #1B5E20 30%, #004D40 90%)',
+    transform: 'scale(1.02)',
+  },
+}));
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    borderRadius: 16,
+    maxWidth: 800,
+    width: '100%',
+    margin: 16,
+  },
+}));
+
+const RiskCard = styled(Card)(({ theme, risk }) => {
+  const getRiskColors = (risk) => {
+    if (risk === "High Risk") return { bg: '#ffebee', border: '#f44336', text: '#c62828' };
+    if (risk === "Moderate Risk") return { bg: '#fff3e0', border: '#ff9800', text: '#ef6c00' };
+    return { bg: '#e8f5e8', border: '#4caf50', text: '#2e7d32' };
+  };
+  
+  const colors = getRiskColors(risk);
+  
+  return {
+    backgroundColor: colors.bg,
+    border: `2px solid ${colors.border}`,
+    '& .MuiTypography-root': {
+      color: colors.text,
+    },
+  };
+});
+
+const ConfidenceCard = styled(Card)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
+  border: '1px solid #e0e0e0',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    boxShadow: theme.shadows[4],
+    transform: 'translateY(-2px)',
+  },
+}));
 
 const DiseaseScreen = ({ ph, tds, turbidity }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -95,197 +176,279 @@ const DiseaseScreen = ({ ph, tds, turbidity }) => {
   const handleOpen = () => {
     setIsOpen(true);
     fetchPrediction();
-    document.body.style.overflow = "hidden"; // Prevent background scroll
   };
 
   const handleClose = () => {
     setIsOpen(false);
-    document.body.style.overflow = ""; // Restore background scroll
   };
 
   const getPriorityColor = (priority) => {
     switch(priority) {
-      case "Critical": return "bg-red-100 text-red-800 border-red-300";
-      case "High": return "bg-orange-100 text-orange-800 border-orange-300";
-      case "Medium": return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      default: return "bg-blue-100 text-blue-800 border-blue-300";
+      case "Critical": return "error";
+      case "High": return "warning";
+      case "Medium": return "info";
+      default: return "primary";
     }
   };
 
-  const getRiskColor = (risk) => {
-    if (risk === "High Risk") return "bg-red-100 text-red-800 border-red-400";
-    if (risk === "Moderate Risk") return "bg-orange-100 text-orange-800 border-orange-400";
-    return "bg-green-100 text-green-800 border-green-400";
+  const getProgressColor = (value) => {
+    if (value > 0.7) return "error";
+    if (value > 0.4) return "warning";
+    return "success";
   };
 
   return (
     <>
       {/* Trigger Button */}
-      <button
+      <GradientButton
         onClick={handleOpen}
-        className="group relative overflow-hidden flex items-center gap-3 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-teal-500/25"
+        startIcon={<ShieldIcon />}
+        size="large"
       >
-        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <ShieldCheck className="w-5 h-5 group-hover:animate-pulse relative z-10" />
-        <span className="relative z-10">Health Risk Analysis</span>
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
-      </button>
+        Health Risk Analysis
+      </GradientButton>
 
-      {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Overlay */}
-          <div 
-            className="fixed inset-0 z-40 bg-black/70 backdrop-blur-2xl"
-            onClick={handleClose}
-          />
-          {/* Modal Content */}
-          <div className="relative z-50 bg-white w-full max-w-2xl rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
-            {/* Gradient Header */}
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600"></div>
-            <div className="p-6">
-              {/* Header */}
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl">
-                    <ShieldCheck className="w-8 h-8 text-emerald-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                      Water Health Analysis
-                    </h2>
-                    <p className="text-gray-600 text-sm">Advanced disease risk assessment</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleClose}
-                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200"
+      {/* Modal Dialog */}
+      <StyledDialog
+        open={isOpen}
+        onClose={handleClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Box display="flex" alignItems="center" gap={2}>
+              <Box
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  background: 'linear-gradient(135deg, #e8f5e8 0%, #c8e6c8 100%)',
+                }}
+              >
+                <ShieldIcon sx={{ color: '#2e7d32', fontSize: 32 }} />
+              </Box>
+              <Box>
+                <Typography variant="h5" component="h2" fontWeight="bold" color="primary">
+                  Water Health Analysis
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Advanced disease risk assessment
+                </Typography>
+              </Box>
+            </Box>
+            <IconButton onClick={handleClose} size="large">
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+
+        <DialogContent dividers>
+          <Container maxWidth={false} disableGutters>
+            {/* Loading State */}
+            {loading && (
+              <Box display="flex" flexDirection="column" alignItems="center" py={8}>
+                <Box position="relative" mb={4}>
+                  <CircularProgress size={80} thickness={4} sx={{ color: '#2e7d32' }} />
+                </Box>
+                <Typography variant="h6" color="primary" gutterBottom>
+                  Analyzing Health Risks
+                </Typography>
+                <Typography variant="body1" color="text.secondary" textAlign="center" mb={3}>
+                  Processing water quality parameters...
+                </Typography>
+                <Box width="100%" maxWidth={300}>
+                  <LinearProgress
+                    sx={{
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: '#e0e0e0',
+                      '& .MuiLinearProgress-bar': {
+                        background: 'linear-gradient(90deg, #2e7d32 0%, #00695c 100%)',
+                        borderRadius: 4,
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            )}
+
+            {/* Results */}
+            {!loading && result && (
+              <Stack spacing={4}>
+                {/* Risk Level Alert */}
+                <RiskCard risk={result.predicted_risk}>
+                  <CardContent>
+                    <Box display="flex" alignItems="center" justifyContent="between" mb={2}>
+                      <Box display="flex" alignItems="center" gap={2}>
+                        <ScienceIcon sx={{ fontSize: 28 }} />
+                        <Typography variant="h6" fontWeight="bold">
+                          Risk Assessment
+                        </Typography>
+                      </Box>
+                      <TrendingUpIcon sx={{ fontSize: 28 }} />
+                    </Box>
+                    <Typography variant="h4" fontWeight="bold" textAlign="center">
+                      {result.predicted_risk}
+                    </Typography>
+                  </CardContent>
+                </RiskCard>
+
+                {/* Advisory */}
+                <Alert 
+                  severity="warning" 
+                  icon={<WarningIcon fontSize="large" />}
+                  sx={{ 
+                    '& .MuiAlert-message': { 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      gap: 1 
+                    },
+                    py: 2
+                  }}
                 >
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-              
-              {/* Loading State */}
-              {loading && (
-                <div className="flex flex-col items-center py-16">
-                  <div className="relative mb-6">
-                    <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-                    <div className="absolute inset-0 w-12 h-12 border-4 border-emerald-200 rounded-full animate-ping"></div>
-                  </div>
-                  <h3 className="text-xl font-semibold text-emerald-600 mb-2">Analyzing Health Risks</h3>
-                  <p className="text-gray-500 text-center mb-4">Processing water quality parameters...</p>
-                  <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="w-full h-full bg-gradient-to-r from-emerald-500 to-teal-500 animate-pulse"></div>
-                  </div>
-                </div>
-              )}
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    Health Advisory
+                  </Typography>
+                  <Typography variant="body1">
+                    {result.advice}
+                  </Typography>
+                </Alert>
 
-              {/* Results */}
-              {!loading && result && (
-                <div className="space-y-6">
-                  {/* Risk Level Alert */}
-                  <div className={`p-4 rounded-xl border-2 ${getRiskColor(result.predicted_risk)}`}>
-                    <div className="flex items-center gap-3 mb-2">
-                      <Activity className="w-6 h-6" />
-                      <h3 className="font-bold text-lg">Risk Assessment</h3>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold">{result.predicted_risk}</span>
-                      <TrendingUp className="w-6 h-6" />
-                    </div>
-                  </div>
-
-                  {/* Advisory */}
-                  <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl">
-                    <div className="flex items-start gap-3">
-                      <AlertTriangle className="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <h4 className="font-bold text-amber-800 mb-2">Health Advisory</h4>
-                        <p className="text-amber-700 leading-relaxed">{result.advice}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Confidence Scores */}
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                      <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded"></div>
+                {/* Confidence Scores */}
+                <Box>
+                  <Box display="flex" alignItems="center" gap={2} mb={3}>
+                    <Box
+                      sx={{
+                        width: 4,
+                        height: 24,
+                        background: 'linear-gradient(180deg, #2e7d32 0%, #00695c 100%)',
+                        borderRadius: 2,
+                      }}
+                    />
+                    <Typography variant="h6" fontWeight="bold">
                       Risk Confidence Analysis
-                    </h3>
-                    <div className="grid gap-3">
-                      {Object.entries(result.confidence_scores).map(([key, value]) => (
-                        <div key={key} className="p-4 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-semibold text-gray-700 capitalize">
-                              {key.replace(/_/g, " ")}
-                            </span>
-                            <span className="font-bold text-gray-900 text-lg">
-                              {(value * 100).toFixed(1)}%
-                            </span>
-                          </div>
-                          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full rounded-full transition-all duration-1000 ${
-                                value > 0.7 ? 'bg-gradient-to-r from-red-500 to-red-600' :
-                                value > 0.4 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
-                                'bg-gradient-to-r from-green-500 to-emerald-500'
-                              }`}
-                              style={{ width: `${value * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                    </Typography>
+                  </Box>
+                  <Grid container spacing={2}>
+                    {Object.entries(result.confidence_scores).map(([key, value]) => (
+                      <Grid item xs={12} key={key}>
+                        <ConfidenceCard>
+                          <CardContent>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                              <Typography variant="subtitle1" fontWeight="medium" sx={{ textTransform: 'capitalize' }}>
+                                {key.replace(/_/g, " ")}
+                              </Typography>
+                              <Typography variant="h6" fontWeight="bold">
+                                {(value * 100).toFixed(1)}%
+                              </Typography>
+                            </Box>
+                            <LinearProgress
+                              variant="determinate"
+                              value={value * 100}
+                              color={getProgressColor(value)}
+                              sx={{
+                                height: 12,
+                                borderRadius: 6,
+                                backgroundColor: '#e0e0e0',
+                                '& .MuiLinearProgress-bar': {
+                                  borderRadius: 6,
+                                },
+                              }}
+                            />
+                          </CardContent>
+                        </ConfidenceCard>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
 
-                  {/* Recommendations */}
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                      <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded"></div>
+                {/* Recommendations */}
+                <Box>
+                  <Box display="flex" alignItems="center" gap={2} mb={3}>
+                    <Box
+                      sx={{
+                        width: 4,
+                        height: 24,
+                        background: 'linear-gradient(180deg, #1976d2 0%, #0288d1 100%)',
+                        borderRadius: 2,
+                      }}
+                    />
+                    <Typography variant="h6" fontWeight="bold">
                       Treatment Recommendations
-                    </h3>
-                    <div className="grid gap-3">
-                      {result.recommendations.map((rec, index) => (
-                        <div key={index} className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-semibold text-gray-800">{rec.type}</h4>
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(rec.priority)}`}>
-                              {rec.priority}
-                            </span>
-                          </div>
-                          <p className="text-gray-600">{rec.action}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                    </Typography>
+                  </Box>
+                  <Grid container spacing={2}>
+                    {result.recommendations.map((rec, index) => (
+                      <Grid item xs={12} md={6} key={index}>
+                        <Card sx={{ height: '100%' }}>
+                          <CardContent>
+                            <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                              <Typography variant="subtitle1" fontWeight="bold">
+                                {rec.type}
+                              </Typography>
+                              <Chip
+                                label={rec.priority}
+                                color={getPriorityColor(rec.priority)}
+                                size="small"
+                                variant="outlined"
+                              />
+                            </Box>
+                            <Typography variant="body2" color="text.secondary">
+                              {rec.action}
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
 
-                  {/* Input Parameters */}
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl border-2 border-blue-200">
-                    <h3 className="font-bold text-gray-800 mb-3">Analyzed Parameters</h3>
-                    <div className="grid grid-cols-3 gap-3">
+                {/* Input Parameters */}
+                <Card sx={{ background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)' }}>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      Analyzed Parameters
+                    </Typography>
+                    <Grid container spacing={3} sx={{ mt: 1 }}>
                       {[
-                        { label: "pH Level", value: result.input.pH, unit: "", optimal: "6.5-8.5" },
-                        { label: "TDS", value: result.input.tds, unit: " ppm", optimal: "<500" },
-                        { label: "Turbidity", value: result.input.turbidity, unit: " NTU", optimal: "<5" }
-                      ].map((param) => (
-                        <div key={param.label} className="bg-white p-3 rounded-xl text-center shadow-sm border border-blue-100">
-                          <div className="font-semibold text-gray-700 text-sm mb-1">{param.label}</div>
-                          <div className="text-xl font-bold text-blue-600 mb-1">
-                            {param.value}{param.unit}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Optimal: {param.optimal}
-                          </div>
-                        </div>
+                        { label: "pH Level", value: result.input.pH, unit: "", optimal: "6.5-8.5", icon: <ScienceIcon /> },
+                        { label: "TDS", value: result.input.tds, unit: " ppm", optimal: "<500", icon: <WaterDropIcon /> },
+                        { label: "Turbidity", value: result.input.turbidity, unit: " NTU", optimal: "<5", icon: <WaterDropIcon /> }
+                      ].map((param, index) => (
+                        <Grid item xs={12} sm={4} key={index}>
+                          <Card sx={{ textAlign: 'center', bgcolor: 'white' }}>
+                            <CardContent>
+                              <Box display="flex" justifyContent="center" mb={1}>
+                                {param.icon}
+                              </Box>
+                              <Typography variant="body2" color="text.secondary" gutterBottom>
+                                {param.label}
+                              </Typography>
+                              <Typography variant="h5" fontWeight="bold" color="primary" gutterBottom>
+                                {param.value}{param.unit}
+                              </Typography>
+                              <Divider sx={{ my: 1 }} />
+                              <Typography variant="caption" color="text.secondary">
+                                Optimal: {param.optimal}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
                       ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Stack>
+            )}
+          </Container>
+        </DialogContent>
+
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={handleClose} variant="outlined" size="large">
+            Close
+          </Button>
+        </DialogActions>
+      </StyledDialog>
     </>
   );
 };

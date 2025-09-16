@@ -4,13 +4,13 @@ import HealthTips from "../components/Dashboard/HealthTips";
 import { Box, Container } from "@mui/material";
 import PreventionMeasures from "../components/Dashboard/PreventionMeasures";
 import WaterQualityCard from "../components/Dashboard/WaterQualityCard";
+import ChatbotFab from "../components/Dashboard/ChatbotFab";
 
 const Dashboardpage = ({ isDark, toggleTheme }) => {
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: isDark ? "#0a1929" : "#f5f5f5",
         position: "relative",
       }}
     >
@@ -37,7 +37,7 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
           <SearchBar isDark={isDark} toggleTheme={toggleTheme} />
         </Box>
 
-        <WaterQualityCard isDark={isDark} />
+        <WaterQualityCard isDark={isDark} toggleTheme={toggleTheme}/>
         {/* Health Tips Section */}
         <Box
           sx={{
@@ -72,7 +72,9 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
           </Box>
         </Box>
       </Box>
+       <ChatbotFab isDark={isDark}/>
     </Box>
+   
   );
 };
 
