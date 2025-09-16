@@ -1,11 +1,21 @@
 import React from "react";
-import { Box, Typography, Paper, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Paper,
+  useMediaQuery,
+  useTheme,
+  Button,
+} from "@mui/material";
 import { Opacity, Thermostat, Waves, Science } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const WaterQualityCard = ({ isDark, toggleTheme }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery("(max-width:900px)");
-  const isDarkMode = theme.palette.mode === 'dark' || isDark;
+  const isDarkMode = theme.palette.mode === "dark" || isDark;
+
+  const navigate = useNavigate();
 
   const values = {
     ph: 7.2,
@@ -76,13 +86,12 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
   let overallExplanation = "✅ This water is safe to use for drinking and daily needs.";
 
   const getStatusColor = (status) => {
-    if (status === 'error') {
+    if (status === "error") {
       return isDarkMode ? theme.palette.error.light : theme.palette.error.main;
     }
-    if (status === 'warning') {
+    if (status === "warning") {
       return isDarkMode ? theme.palette.warning.light : theme.palette.warning.main;
     }
-    // success
     return isDarkMode ? theme.palette.success.light : theme.palette.success.main;
   };
 
@@ -94,15 +103,13 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
     overallStatus = "MODERATE";
     overallExplanation =
       "⚠ Water is usable but has some issues. Consider treatment before consumption.";
-  } else if (cardData.some((item) => item.status === "warning")) {
-    // handled above
   }
 
-  const worstStatus = cardData.some((i) => i.status === 'error')
-    ? 'error'
-    : cardData.some((i) => i.status === 'warning')
-    ? 'warning'
-    : 'success';
+  const worstStatus = cardData.some((i) => i.status === "error")
+    ? "error"
+    : cardData.some((i) => i.status === "warning")
+    ? "warning"
+    : "success";
   const statusColor = getStatusColor(worstStatus);
 
   const OverallComment = () => (
@@ -112,15 +119,20 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
         p: 2,
         borderRadius: 2,
         textAlign: "center",
-        bgcolor: isDarkMode ? 'background.paper' : '#f0f4ff',
-        border: '1px solid',
-        borderColor: isDarkMode ? 'primary.dark' : 'primary.light',
-        mt: 2,
+        bgcolor: isDarkMode ? "background.paper" : "#f0f4ff",
+        border: "1px solid",
+        borderColor: isDarkMode ? "primary.dark" : "primary.light",
+        // mt: 2,
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <Typography
         variant="subtitle1"
-        sx={{ fontWeight: "bold", color: 'primary.main', mb: 1 }}
+        sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}
       >
         Water Quality
       </Typography>
@@ -129,10 +141,22 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
       </Typography>
       <Typography
         variant="caption"
-        sx={{ color: statusColor, display: "block", mt: 0.5, lineHeight: 1.3 }}
+        sx={{
+          color: statusColor,
+          display: "block",
+          mt: 0.5,
+          lineHeight: 1.3,
+          mb: 2,
+        }}
       >
         {overallExplanation}
       </Typography>
+
+      {/* ✅ Analyse Button added */}
+      <Button variant="contained" color="primary" size="small"
+       onClick={() => navigate("/checker")}>
+        Analyse
+      </Button>
     </Paper>
   );
 
@@ -143,7 +167,7 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
         p: 2,
         borderRadius: 2,
         textAlign: "center",
-        bgcolor: isDarkMode ? 'background.paper' : '#fff',
+        bgcolor: isDarkMode ? "background.paper" : "#fff",
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -174,7 +198,6 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
     </Paper>
   );
 
-  // Mobile: Single card with 2x2 grid of parameters
   const MobileParameterCard = () => (
     <Paper
       elevation={2}
@@ -182,7 +205,7 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
         p: 2,
         borderRadius: 2,
         textAlign: "center",
-        bgcolor: isDarkMode ? 'background.paper' : '#fff',
+        bgcolor: isDarkMode ? "background.paper" : "#fff",
       }}
     >
       <Box
@@ -240,17 +263,17 @@ const WaterQualityCard = ({ isDark, toggleTheme }) => {
         p: 3,
         borderRadius: 3,
         width: "100%",
-        maxWidth: { xs: '100%', md: 1200 },
-        bgcolor: isDarkMode ? 'background.default' : '#fafaff',
-        border: '1px solid',
-        borderColor: isDarkMode ? 'primary.dark' : 'primary.light',
-        mx: 'auto',
+        maxWidth: { xs: "100%", md: 1200 },
+        bgcolor: isDarkMode ? "background.default" : "#fafaff",
+        border: "1px solid",
+        borderColor: isDarkMode ? "primary.dark" : "primary.light",
+        mx: "auto",
         px: { xs: 1, sm: 2 },
       }}
     >
       <Typography
         variant="h6"
-        sx={{ mb: 3, fontWeight: "bold", color: 'primary.main' }}
+        sx={{ mb: 3, fontWeight: "bold", color: "primary.main" }}
       >
         Water Quality Overview
       </Typography>

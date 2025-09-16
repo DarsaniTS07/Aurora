@@ -141,7 +141,7 @@ const WaterCharts = ({ chartData, qualityData, COLORS }) => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={enhancedChartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
@@ -209,8 +209,8 @@ const WaterCharts = ({ chartData, qualityData, COLORS }) => {
       <Grid container spacing={4} mt={1}>
         {/* Safety Scores */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3 }}>
-            <Box display="flex" alignItems="center" gap={2} mb={3}>
+          <Card >
+            <Box display="flex" alignItems="center" gap={2} mb={3} p= {3}>
               <Box p={1.5} bgcolor="success.main" borderRadius={2}>
                 <Activity size={24} color="white" />
               </Box>
@@ -244,7 +244,7 @@ const WaterCharts = ({ chartData, qualityData, COLORS }) => {
 
         {/* Quality Metrics Summary */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: 2 }}>
             <Box display="flex" alignItems="center" gap={2} mb={3}>
               <Box p={1.5} bgcolor="warning.main" borderRadius={2}>
                 <TrendingUp size={24} color="white" />
@@ -261,7 +261,7 @@ const WaterCharts = ({ chartData, qualityData, COLORS }) => {
             <Grid container spacing={2}>
               {enhancedChartData.map((item) => (
                 <Grid item xs={12} sm={6} key={item.name}>
-                  <Card variant="outlined" sx={{ p: 2 }}>
+                  <Card variant="outlined" sx={{ p: 1 }}>
                     <Box display="flex" justifyContent="space-between" mb={1}>
                       <Typography fontWeight="bold">{item.name}</Typography>
                       <Box
