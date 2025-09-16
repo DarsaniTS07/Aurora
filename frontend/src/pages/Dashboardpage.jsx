@@ -4,6 +4,7 @@ import HealthTips from "../components/Dashboard/HealthTips";
 import { Box, Container } from "@mui/material";
 import PreventionMeasures from "../components/Dashboard/PreventionMeasures";
 import WaterQualityCard from "../components/Dashboard/WaterQualityCard";
+import ChatbotFab from "../components/Dashboard/ChatbotFab";
 
 const Dashboardpage = ({ isDark, toggleTheme }) => {
   return (
@@ -71,7 +72,9 @@ const Dashboardpage = ({ isDark, toggleTheme }) => {
           </Box>
         </Box>
       </Box>
+       <ChatbotFab isDark={isDark}/>
     </Box>
+   
   );
 };
 
