@@ -8,55 +8,72 @@ import {
   Typography,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import axios from "axios"; // ✅ Import axios
 
 const ChatbotFab = ({ isDark }) => {
-  const [open, setOpen] = useState(false); // toggle chat window
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     { from: "bot", text: "Hi 👋 I'm your assistant. How can I help you?" },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
 
-  // ✅ Auto-scroll to bottom when new messages appear
+  // ✅ Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
-    // Add user message
+    // Add user message immediately
     const newMessages = [...messages, { from: "user", text: input }];
     setMessages(newMessages);
+    setLoading(true);
 
-    // Fake bot reply (replace with real API later)
-    setTimeout(() => {
+    try {
+      // Use Vite proxy to avoid CORS and hardcoding host
+      const response = await axios.post("/api/ask", {
+        query: input,
+      });
+
+      const botReply = response?.data?.answer || "I am not trained for that.";
+
+      setMessages((prev) => [...prev, { from: "bot", text: botReply }]);
+    } catch (error) {
+      console.error("Error talking to backend:", error);
+      const errMsg =
+        error?.response?.data?.error ||
+        (error?.message ? `Network error: ${error.message}` :
+          "⚠️ Sorry, I couldn’t connect to the server.");
       setMessages((prev) => [
         ...prev,
-        { from: "bot", text: `You said: "${input}"` },
+        { from: "bot", text: errMsg },
       ]);
-    }, 600);
-
-    setInput("");
+    } finally {
+      setLoading(false);
+      setInput("");
+    }
   };
 
   return (
     <Box
       sx={{
         position: "fixed",
-        bottom: { xs: 90, sm: 24 }, // ✅ move up in mobile so it's not hidden
-        right: { xs: 16, sm: 24 },  // ✅ give space on mobile edge
-        zIndex: 2000, // ✅ ensure it's above everything
+        bottom: { xs: 90, sm: 24 },
+        right: { xs: 16, sm: 24 },
+        zIndex: 2000,
       }}
     >
-      {/* Chat window */}
+      {/* Chat Window */}
       {open && (
         <Paper
           elevation={4}
           sx={{
             position: "absolute",
-            bottom: { xs: 70, sm: 80 }, // ✅ spacing from FAB
+            bottom: { xs: 70, sm: 80 },
             right: 0,
             width: { xs: "90vw", sm: 300 },
             height: { xs: 300, sm: 380 },
@@ -68,14 +85,8 @@ const ChatbotFab = ({ isDark }) => {
             color: isDark ? "#fff" : "#000",
           }}
         >
-          {/* Chat messages */}
-          <Box
-            sx={{
-              flex: 1,
-              p: 1,
-              overflowY: "auto",
-            }}
-          >
+          {/* Messages */}
+          <Box sx={{ flex: 1, p: 1, overflowY: "auto" }}>
             {messages.map((msg, i) => (
               <Box
                 key={i}
@@ -112,11 +123,17 @@ const ChatbotFab = ({ isDark }) => {
                 </Typography>
               </Box>
             ))}
-            {/* scroll anchor */}
+            {loading && (
+              <Typography
+                sx={{ fontSize: "0.8rem", color: "gray", textAlign: "center" }}
+              >
+                Aura is typing...
+              </Typography>
+            )}
             <div ref={messagesEndRef} />
           </Box>
 
-          {/* Input box */}
+          {/* Input */}
           <Box sx={{ display: "flex", p: 1 }}>
             <TextField
               fullWidth
@@ -139,18 +156,15 @@ const ChatbotFab = ({ isDark }) => {
         </Paper>
       )}
 
-      {/* Floating Chatbot button */}
+      {/* Floating Button */}
       <Fab
         sx={{
           bgcolor: isDark ? "#1976d2" : "#0a1929",
           color: "#fff",
           fontSize: "1.8rem",
-          "&:hover": {
-            bgcolor: isDark ? "#1565c0" : "#111827",
-          },
+          "&:hover": { bgcolor: isDark ? "#1565c0" : "#111827" },
         }}
-        aria-label="chatbot"
-        onClick={() => setOpen(!open)} // toggle window
+        onClick={() => setOpen(!open)}
       >
         🤖
       </Fab>
