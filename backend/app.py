@@ -28,13 +28,33 @@ generation_config = {
 model = aura.GenerativeModel(
     model_name="gemini-1.5-flash",
     generation_config=generation_config,
-    system_instruction="""
-        You are Aura.
-        1. For queries about specific villages or data in the PDF dataset, answer strictly based on the dataset.
-        2. For questions about prevention or health tips (e.g., waterborne diseases), provide generic advice, not from the dataset.
-        3. For anything else, respond: 'I am not trained for that.'
-    """
-)
+    system_instruction = """
+You are Aurora, an assistant focused on water quality, health, and rural village data.
+
+You can do:
+- Answer user questions about water-related concepts (pH, contamination, safe water practices, waterborne diseases, their effects, prevention methods) in a clear, simple, and user-friendly way.
+- Answer questions about specific villages or regions strictly using the provided PDF dataset.
+- Provide prevention and health tips when asked.
+
+Example:
+user: what is the ph
+ai: pH tells us if water is acidic or alkaline. Pure water has a pH of 7 (neutral). A low pH (acidic) can corrode pipes and harm health, while a high pH (alkaline) can make water taste bitter.
+
+You can’t do:
+- Answer irrelevant questions that are not related to water, health, or the dataset (like programming, math, finance, etc.).  
+For such queries, always reply: "sorry This is irrelevant to me."
+
+Example:
+user: give a code for adding two numbers
+ai: This is irrelevant to me.
+
+Rules:
+1. For dataset-based queries, use only the dataset (do not invent).  
+2. For water-related and educational queries, reply in a simple, supportive way.  
+3. If irrelevant, politely decline with: "This is irrelevant to me."
+4. Use emojis wherever possible."
+"""
+)      
 
 # ===== PDF LOADER =====
 def load_pdfs(folder_path):
@@ -61,28 +81,43 @@ def prevention_tips():
     )
 
 # ===== API ROUTE =====
-@app.route("/ask", methods=["POST"])
+@app.route("/ask", methods=["GET", "POST"])
 def ask_aura():
-    data = request.get_json()
-    if not data or "query" not in data:
-        return jsonify({"error": "Please provide a 'query' field"}), 400
-
-    command = data["query"].strip().lower()
-
     try:
-        # Generic health/prevention questions
-        if "waterborne" in command or "disease" in command or "prevention" in command or "health tip" in command:
+        # ✅ Handle GET and POST
+        if request.method == "GET":
+            command = request.args.get("query", "").strip().lower()
+        else:
+            data = request.get_json()
+            if not data or "query" not in data:
+                return jsonify({"error": "Please provide a 'query' field"}), 400
+            command = data["query"].strip().lower()
+
+        if not command:
+            return jsonify({"error": "Empty query provided"}), 400
+
+        # ✅ Generic health/prevention questions
+        if any(x in command for x in ["waterborne", "disease", "prevention", "health tip"]):
             answer = prevention_tips()
         else:
-            # Dataset queries
+            # ✅ Dataset queries
             response = model.generate_content(
                 f"User asked: {command}\n\n"
                 f"Refer strictly to the PDF dataset:\n{pdf_knowledge[:3000]}"
             )
-            answer = response.text
+
+            # Some models return `.text`, others return `.candidates[...]`
+            try:
+                answer = response.text
+            except AttributeError:
+                answer = response.candidates[0].content.parts[0].text
+
         return jsonify({"answer": answer})
+
     except Exception as e:
-        print("AI response error:", e)
+        import traceback
+        print("🔥 ERROR inside /ask:", e)
+        traceback.print_exc()
         return jsonify({"answer": "Sorry, I couldn't process your request."}), 500
 
 # ===== RUN SERVER =====
