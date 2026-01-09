@@ -7,7 +7,7 @@ import PyPDF2
 app = Flask(__name__)
 
 # ===== PDF DATASET FOLDER =====
-DATASET_FOLDER = r"C:\Users\Mahithaa sri\OneDrive\Desktop\SIH\Aurora\backend\dataset"
+DATASET_FOLDER = os.path.join(os.path.dirname(__file__), "dataset")
 
 # ===== API CONFIG =====
 try:
